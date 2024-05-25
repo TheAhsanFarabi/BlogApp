@@ -18,14 +18,15 @@ struct user
 // Function prototypes
 void register_user(struct user *u);
 void login();
-void feed();
+void feed(const char *username);
+void createBlog(const char *username);
 void showBlog();
 
 void register_user(struct user *u)
 {
     printf("============ REGISTER NOW ============\n");
     printf("Type your username: ");
-    scanf("%s", u->username); // Correct usage of scanf without & for array
+    scanf("%s", u->username);
     printf("Type your password (INT): ");
     scanf("%d", &u->password);
 
@@ -37,7 +38,7 @@ void register_user(struct user *u)
     }
     fprintf(file, "Username: %s Password: %d\n", u->username, u->password);
     fclose(file);
-
+    fflush(stdout);
     login();
 }
 
@@ -48,7 +49,7 @@ void login()
     int password;
 
     printf("Type your username: ");
-    scanf("%s", username); // Correct usage of scanf without & for array
+    scanf("%s", username);
     printf("Type your password (INT): ");
     scanf("%d", &password);
 
@@ -77,7 +78,7 @@ void login()
     if (logged_in)
     {
         printf("Login successful! Welcome %s\n", username);
-        feed();
+        feed(username);
     }
     else
     {
@@ -85,17 +86,72 @@ void login()
     }
 }
 
-void feed()
+void feed(const char *username)
 {
     printf("============ Welcome to Feed ============\n");
-    // Placeholder for feed implementation
-    printf("Feed functionality not implemented yet.\n");
+    printf("1. Create a Blog\n");
+    printf("2. Show All Blogs\n");
+    printf("3. Logout\n");
+    printf("Choose option (1/2/3): ");
+    int option;
+    scanf("%d", &option);
+
+    switch (option)
+    {
+    case 1:
+        createBlog(username);
+        break;
+    case 2:
+        showBlog();
+        break;
+    case 3:
+        printf("Logged out successfully.\n");
+        break;
+    default:
+        printf("Invalid option.\n");
+    }
+}
+
+void createBlog(const char *username)
+{
+    struct blog b;
+    strcpy(b.author, username);
+
+    printf("Enter blog title: ");
+    scanf(" %[^\n]%*c", b.title);
+
+    printf("Enter blog content: ");
+    scanf(" %[^\n]%*c", b.content);
+
+    FILE *file = fopen("blog_info.txt", "a");
+    if (file == NULL)
+    {
+        printf("Error opening file for writing.\n");
+        return;
+    }
+    fprintf(file, "Title: %s\nContent: %s\nAuthor: %s\n\n", b.title, b.content, b.author);
+    fclose(file);
+
+    printf("Blog created successfully!\n");
 }
 
 void showBlog()
 {
-    // Placeholder for showing blog details
-    printf("Show blog functionality not implemented yet.\n");
+    printf("============ All Blogs ============\n");
+    FILE *file = fopen("blog_info.txt", "r");
+    if (file == NULL)
+    {
+        printf("Error opening file for reading.\n");
+        return;
+    }
+
+    char line[600];
+    while (fgets(line, sizeof(line), file) != NULL)
+    {
+        printf("%s", line);
+    }
+
+    fclose(file);
 }
 
 int main()
@@ -110,7 +166,7 @@ int main()
     if (option == 1)
     {
         struct user u;
-        register_user(&u); // Pass by reference
+        register_user(&u);
     }
     else if (option == 2)
     {
