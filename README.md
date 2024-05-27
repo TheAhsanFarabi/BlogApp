@@ -12,3 +12,8 @@ ByteBlog is a simple command-line blogging application written in C. It allows u
 ### Prerequisites
 
 To compile and run ByteBlog, you need to have a C compiler installed on your system. GCC (GNU Compiler Collection) can be used.
+
+## Acknowledgements
+
+- Special thanks to Ahmad Nabil
+
